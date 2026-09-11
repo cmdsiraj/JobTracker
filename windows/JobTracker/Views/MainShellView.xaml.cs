@@ -213,6 +213,12 @@ public partial class MainShellView : UserControl
 
     private async void SyncNow_Click(object sender, RoutedEventArgs e) => await _vm.SyncNowCommand.ExecuteAsync(null);
 
+    private void Settings_Click(object sender, RoutedEventArgs e)
+    {
+        var window = new SettingsWindow(new SettingsViewModel(_vm.AppState)) { Owner = Window.GetWindow(this) };
+        window.ShowDialog();
+    }
+
     private void SearchBox_TextChanged(object sender, TextChangedEventArgs e) => _vm.Filters.SearchText = SearchBox.Text;
 
     private void FilterButton_Click(object sender, RoutedEventArgs e)

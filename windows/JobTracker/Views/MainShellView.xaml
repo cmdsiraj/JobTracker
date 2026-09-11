@@ -43,6 +43,7 @@
                         <TextBlock x:Name="SyncStatusText" VerticalAlignment="Center" FontSize="11"
                                    Foreground="{StaticResource SecondaryTextBrush}" Margin="0,0,10,0" Visibility="Collapsed"/>
                         <Button x:Name="SyncNowButton" Content="🔄 Sync Now" Click="SyncNow_Click" Padding="10,6"/>
+                        <Button Content="⚙" FontSize="14" Padding="8,6" Margin="8,0,0,0" Click="Settings_Click" ToolTip="Settings"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
                         <Button Content="➕ Add Manually" Padding="10,6" Click="AddManually_Click"/>
