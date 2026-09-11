@@ -16,3 +16,10 @@ Takeout/
 
 # Distribution artifacts
 *.dmg
+
+# .NET / Windows
+windows/**/bin/
+windows/**/obj/
+*.user
+.vs/
+
