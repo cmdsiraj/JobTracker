@@ -16,11 +16,18 @@ public static class AppConfig
     /// quota.
     public static string GoogleClientId => Preferences.Shared.GoogleClientId;
 
+    /// The matching secret Google issues alongside a "Desktop app" client ID.
+    /// Google's token endpoint requires it on every code exchange and
+    /// refresh for this client type, even though the flow uses PKCE — so
+    /// despite the name, this isn't optional for a "public" client here.
+    public static string GoogleClientSecret => Secrets.Shared.Get(SecretKey.GoogleClientSecret) ?? "";
+
     public const string ClientIdSuffix = ".apps.googleusercontent.com";
 
     public static bool IsGoogleConfigured =>
         GoogleClientId.EndsWith(ClientIdSuffix, StringComparison.Ordinal) &&
-        GoogleClientId.Length > ClientIdSuffix.Length;
+        GoogleClientId.Length > ClientIdSuffix.Length &&
+        GoogleClientSecret.Length > 0;
 
     public static readonly Uri AuthorizationEndpoint = new("https://accounts.google.com/o/oauth2/v2/auth");
     public static readonly Uri TokenEndpoint = new("https://oauth2.googleapis.com/token");

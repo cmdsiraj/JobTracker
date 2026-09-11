@@ -62,6 +62,7 @@ public partial class SettingsWindow : Window
         GmailAccountText.Text = auth.AccountEmail ?? "";
         GmailAccountText.Visibility = string.IsNullOrEmpty(auth.AccountEmail) ? Visibility.Collapsed : Visibility.Visible;
         ClientIdBox.Text = _vm.AppState.Prefs.GoogleClientId;
+        ClientSecretStatusText.Text = $"Client Secret: {(AppConfig.GoogleClientSecret.Length > 0 ? "Set" : "Missing")}";
         ReconnectButton.IsEnabled = AppConfig.IsGoogleConfigured;
         SignOutButton.IsEnabled = auth.IsSignedIn;
 
@@ -105,10 +106,27 @@ public partial class SettingsWindow : Window
         ReconnectButton.IsEnabled = AppConfig.IsGoogleConfigured;
     }
 
+    private void ClientSecretBox_PasswordChanged(object sender, RoutedEventArgs e)
+    {
+        if (_loading) return;
+        Secrets.Shared.Set(ClientSecretBox.Password.Trim(), SecretKey.GoogleClientSecret);
+        ClientSecretStatusText.Text = $"Client Secret: {(AppConfig.GoogleClientSecret.Length > 0 ? "Set" : "Missing")}";
+        ReconnectButton.IsEnabled = AppConfig.IsGoogleConfigured;
+    }
+
     private async void Reconnect_Click(object sender, RoutedEventArgs e)
     {
-        try { await _vm.ReconnectAsync(); }
-        catch { /* surfaced via ActivityLog */ }
+        GmailErrorText.Visibility = Visibility.Collapsed;
+        try
+        {
+            await _vm.ReconnectAsync();
+        }
+        catch (Exception ex)
+        {
+            ActivityLog.Shared.Error($"Gmail reconnect failed: {ex.Message}");
+            GmailErrorText.Text = ex.Message;
+            GmailErrorText.Visibility = Visibility.Visible;
+        }
         LoadAccount();
     }
 

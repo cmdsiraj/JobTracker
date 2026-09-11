@@ -142,6 +142,7 @@ public sealed partial class GmailAuthService : DispatcherObservableObject
         var token = await PostTokenAsync(new Dictionary<string, string>
         {
             ["client_id"] = AppConfig.GoogleClientId,
+            ["client_secret"] = AppConfig.GoogleClientSecret,
             ["code"] = code,
             ["code_verifier"] = verifier,
             ["grant_type"] = "authorization_code",
@@ -172,6 +173,7 @@ public sealed partial class GmailAuthService : DispatcherObservableObject
         var token = await PostTokenAsync(new Dictionary<string, string>
         {
             ["client_id"] = AppConfig.GoogleClientId,
+            ["client_secret"] = AppConfig.GoogleClientSecret,
             ["refresh_token"] = refreshToken,
             ["grant_type"] = "refresh_token",
         });

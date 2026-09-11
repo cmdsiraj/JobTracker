@@ -24,12 +24,16 @@
                     <TextBlock x:Name="GmailAccountText" Margin="0,0,0,8" Foreground="{StaticResource SecondaryTextBrush}"/>
                     <TextBlock Text="OAuth Client ID" Style="{StaticResource CaptionText}"/>
                     <TextBox x:Name="ClientIdBox" FontFamily="Consolas" TextChanged="ClientIdBox_TextChanged"/>
-                    <TextBlock Text="Your own Google Cloud OAuth client (Desktop app type, Gmail API enabled). Changing it signs you out."
+                    <TextBlock Text="OAuth Client Secret" Style="{StaticResource CaptionText}" Margin="0,6,0,0"/>
+                    <PasswordBox x:Name="ClientSecretBox" FontFamily="Consolas" PasswordChanged="ClientSecretBox_PasswordChanged"/>
+                    <TextBlock x:Name="ClientSecretStatusText" Style="{StaticResource CaptionText}" Margin="0,2,0,0"/>
+                    <TextBlock Text="Your own Google Cloud OAuth client (Desktop app type, Gmail API enabled) — Google issues both an ID and a secret for this type, and requires both to sign in. Changing either signs you out."
                                Style="{StaticResource CaptionText}" TextWrapping="Wrap" Margin="0,4,0,8"/>
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
                         <Button x:Name="ReconnectButton" Content="Reconnect" Padding="10,5" Click="Reconnect_Click"/>
                         <Button x:Name="SignOutButton" Content="Sign Out" Padding="10,5" Margin="8,0,0,0" Foreground="{StaticResource DangerBrush}" Click="SignOut_Click"/>
                     </StackPanel>
+                    <TextBlock x:Name="GmailErrorText" Style="{StaticResource CaptionText}" Foreground="{StaticResource DangerBrush}" TextWrapping="Wrap" Margin="0,0,0,16" Visibility="Collapsed"/>
 
                     <TextBlock Text="AI Provider" Style="{StaticResource SectionHeader}"/>
                     <ComboBox x:Name="ProviderCombo" Margin="0,0,0,8" SelectionChanged="ProviderCombo_SelectionChanged"/>

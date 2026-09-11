@@ -67,6 +67,17 @@ public partial class OnboardingView : UserControl
     private void ClientIdBox_TextChanged(object sender, TextChangedEventArgs e)
     {
         _vm.AppState.Prefs.GoogleClientId = ClientIdBox.Text;
+        RefreshGmailFormState();
+    }
+
+    private void ClientSecretBox_PasswordChanged(object sender, RoutedEventArgs e)
+    {
+        Secrets.Shared.Set(ClientSecretBox.Password.Trim(), SecretKey.GoogleClientSecret);
+        RefreshGmailFormState();
+    }
+
+    private void RefreshGmailFormState()
+    {
         var configured = AppConfig.IsGoogleConfigured;
         ClientIdWarning.Visibility = ClientIdBox.Text.Length > 0 && !configured ? Visibility.Visible : Visibility.Collapsed;
         ConnectGmailButton.IsEnabled = configured && !_vm.SigningIn;

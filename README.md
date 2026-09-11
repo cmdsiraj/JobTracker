@@ -61,7 +61,9 @@ On first launch, onboarding walks you through: Gmail connect → LLM API key
 2. Enable the **Gmail API**
 3. OAuth consent screen → External → add your email as a *Test user*
 4. Credentials → Create OAuth client ID → type **Desktop app**
-5. Paste the Client ID into onboarding (or Settings → Account)
+5. Paste both the Client ID *and* Client Secret into onboarding (or Settings
+   → Account) — Google issues a secret alongside the ID for this client
+   type, and requires it on every sign-in and token refresh
 
 ### Using AWS Bedrock instead of a hosted LLM API
 

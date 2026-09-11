@@ -58,6 +58,11 @@
                         <TextBlock x:Name="ClientIdWarning" FontSize="11" Foreground="{StaticResource WarningBrush}"
                                    HorizontalAlignment="Center" Margin="0,4,0,0" Visibility="Collapsed"
                                    Text="A client ID ends in .apps.googleusercontent.com"/>
+                        <PasswordBox x:Name="ClientSecretBox" Width="360" FontFamily="Consolas" FontSize="11" Margin="0,8,0,0"
+                                     PasswordChanged="ClientSecretBox_PasswordChanged"/>
+                        <TextBlock FontSize="11" Foreground="{StaticResource TertiaryTextBrush}"
+                                   HorizontalAlignment="Center" Margin="0,4,0,0"
+                                   Text="Client Secret — Google shows this next to the Client ID."/>
                         <Button x:Name="ToggleInstructionsButton" Content="How do I get a Client ID? ▾" Style="{StaticResource PlainButton}"
                                 Foreground="{StaticResource AccentBrush}" FontSize="11" HorizontalAlignment="Center"
                                 Margin="0,8,0,0" Click="ToggleInstructions_Click"/>
@@ -68,7 +73,7 @@
                                 2. Enable the Gmail API
                                 3. OAuth consent screen → External → add your email as a Test user
                                 4. Credentials → Create OAuth client ID → type "Desktop app"
-                                5. Paste the Client ID above
+                                5. Paste the Client ID and Client Secret above (Google shows both after creating the client)
                             </TextBlock>
                         </Border>
 
