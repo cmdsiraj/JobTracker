@@ -8,6 +8,10 @@ Built with SwiftUI + SwiftData. No server, no shared database: all data lives on
 ![Swift](https://img.shields.io/badge/Swift-5-orange)
 ![UI](https://img.shields.io/badge/UI-SwiftUI-purple)
 
+> **Windows user?** See [windows/README.md](windows/README.md) for the WPF port (`windows-port` branch) — same
+> Gmail-sync/LLM-classification engine, ported line-for-line, with a native WPF UI and DPAPI secrets in place of
+> Keychain. No iCloud sync equivalent; storage is local-only there.
+
 ## Features
 
 ### Ingestion & intelligence
