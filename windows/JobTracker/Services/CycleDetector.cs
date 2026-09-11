@@ -51,6 +51,15 @@ public static partial class CycleDetector
         return (year, season);
     }
 
+    /// Newest-cycle-first comparer, for UI lists (cycle chips, filter menus).
+    public static int CompareDescending(string a, string b)
+    {
+        var (yearA, seasonA) = SortKey(a);
+        var (yearB, seasonB) = SortKey(b);
+        var year = yearB.CompareTo(yearA);
+        return year != 0 ? year : seasonB.CompareTo(seasonA);
+    }
+
     private static string Normalize(string season, string year)
     {
         var name = season == "autumn" ? "Fall" : char.ToUpperInvariant(season[0]) + season[1..];
