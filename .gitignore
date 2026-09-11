@@ -1,25 +1,10 @@
-# macOS
-.DS_Store
-
-# Xcode
-DerivedData/
-build/
-*.xcuserstate
-xcuserdata/
-*.xcscmblueprint
-*.xccheckout
-
 # Never commit mail archives or exported data
 *.mbox
 initialIngestionData/
 Takeout/
 
-# Distribution artifacts
-*.dmg
-
 # .NET / Windows
-windows/**/bin/
-windows/**/obj/
+**/bin/
+**/obj/
 *.user
 .vs/
-
