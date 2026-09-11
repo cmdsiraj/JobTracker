@@ -1,0 +1,141 @@
+<UserControl x:Class="JobTracker.Views.OnboardingView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d" d:DesignHeight="600" d:DesignWidth="640">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" Padding="48,32">
+            <Grid>
+                <!-- Welcome -->
+                <StackPanel x:Name="WelcomePanel" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="460">
+                    <TextBlock Text="💼" FontSize="56" HorizontalAlignment="Center" Margin="0,0,0,12"/>
+                    <TextBlock Text="Welcome to JobTracker" FontSize="28" FontWeight="Bold"
+                               HorizontalAlignment="Center" Margin="0,0,0,12"/>
+                    <TextBlock TextWrapping="Wrap" TextAlignment="Center" FontSize="14"
+                               Foreground="{StaticResource SecondaryTextBrush}"
+                               Text="Your job search, on autopilot. JobTracker reads your job-related email, classifies it with AI, and keeps every application's status, timeline, and stats up to date — automatically."/>
+                    <UniformGrid Rows="1" Columns="3" Margin="0,20,0,0">
+                        <StackPanel HorizontalAlignment="Center">
+                            <TextBlock Text="📧" FontSize="22" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Gmail-powered" FontSize="11" Foreground="{StaticResource SecondaryTextBrush}" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                        <StackPanel HorizontalAlignment="Center">
+                            <TextBlock Text="🧠" FontSize="22" HorizontalAlignment="Center"/>
+                            <TextBlock Text="AI classification" FontSize="11" Foreground="{StaticResource SecondaryTextBrush}" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                        <StackPanel HorizontalAlignment="Center">
+                            <TextBlock Text="🔒" FontSize="22" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Private by design" FontSize="11" Foreground="{StaticResource SecondaryTextBrush}" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </UniformGrid>
+                </StackPanel>
+
+                <!-- Gmail -->
+                <StackPanel x:Name="GmailPanel" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="480" Visibility="Collapsed">
+                    <TextBlock Text="Connect Gmail" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                    <TextBlock TextWrapping="Wrap" TextAlignment="Center" Foreground="{StaticResource SecondaryTextBrush}" Margin="0,0,0,18"
+                               Text="JobTracker asks for read-only access and only ever looks for job-related mail. Your credentials stay between you and Google."/>
+
+                    <StackPanel x:Name="GmailConnectedPanel" Visibility="Collapsed" HorizontalAlignment="Center">
+                        <Border Style="{StaticResource CardBorder}" Width="380">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock Text="✅" FontSize="36" HorizontalAlignment="Center"/>
+                                <TextBlock Text="Connected" FontWeight="SemiBold" HorizontalAlignment="Center" Margin="0,6,0,2"/>
+                                <TextBlock x:Name="AccountEmailText" Foreground="{StaticResource SecondaryTextBrush}" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
+                    <StackPanel x:Name="GmailDisconnectedPanel">
+                        <Border Style="{StaticResource CardBorder}" MaxWidth="460">
+                            <StackPanel>
+                                <TextBlock Text="🔑 Your Google OAuth Client ID" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                                <TextBlock TextWrapping="Wrap" FontSize="11" Foreground="{StaticResource SecondaryTextBrush}" Margin="0,0,0,8">
+                                    JobTracker uses your own (free) Google API access — nothing is shared:
+                                    1. Go to console.cloud.google.com and create a project
+                                    2. Enable the Gmail API
+                                    3. OAuth consent screen → External → add your email as a Test user
+                                    4. Credentials → Create OAuth client ID → type "Desktop app"
+                                    5. Paste the Client ID below
+                                </TextBlock>
+                                <TextBox x:Name="ClientIdBox" FontFamily="Consolas"
+                                         TextChanged="ClientIdBox_TextChanged"/>
+                                <TextBlock x:Name="ClientIdWarning" FontSize="11" Foreground="{StaticResource WarningBrush}" Margin="0,4,0,0"
+                                           Text="A client ID ends in .apps.googleusercontent.com" Visibility="Collapsed"/>
+                            </StackPanel>
+                        </Border>
+                        <Button x:Name="ConnectGmailButton" Content="Connect Gmail" Style="{StaticResource PrimaryButton}"
+                                HorizontalAlignment="Center" Margin="0,16,0,0" Padding="24,10" Click="ConnectGmail_Click"/>
+                    </StackPanel>
+
+                    <TextBlock x:Name="SignInErrorText" Foreground="{StaticResource WarningBrush}" TextWrapping="Wrap"
+                               TextAlignment="Center" Margin="0,12,0,0" Visibility="Collapsed"/>
+                </StackPanel>
+
+                <!-- API key -->
+                <StackPanel x:Name="ApiKeyPanel" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="480" Visibility="Collapsed">
+                    <TextBlock Text="Add your AI provider key" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                    <TextBlock TextWrapping="Wrap" TextAlignment="Center" Foreground="{StaticResource SecondaryTextBrush}" Margin="0,0,0,18"
+                               Text="The AI that reads and classifies your email runs on NVIDIA's free API by default. Grab a key at build.nvidia.com — it takes about a minute."/>
+                    <Border Style="{StaticResource CardBorder}" Width="420">
+                        <StackPanel>
+                            <DockPanel>
+                                <Button x:Name="ValidateKeyButton" DockPanel.Dock="Right" Content="Validate &amp; Save"
+                                        Style="{StaticResource PrimaryButton}" Margin="8,0,0,0" Click="ValidateKey_Click"/>
+                                <PasswordBox x:Name="ApiKeyBox" PasswordChanged="ApiKeyBox_PasswordChanged"/>
+                            </DockPanel>
+                            <TextBlock x:Name="KeyStatusText" Margin="0,10,0,0" TextWrapping="Wrap" FontSize="12"/>
+                        </StackPanel>
+                    </Border>
+                    <TextBlock Margin="0,14,0,0" HorizontalAlignment="Center">
+                        <Hyperlink NavigateUri="https://build.nvidia.com" RequestNavigate="Hyperlink_RequestNavigate">
+                            Get a free key at build.nvidia.com
+                        </Hyperlink>
+                    </TextBlock>
+                    <TextBlock Text="Your key is stored only in an encrypted local file on this PC." FontSize="10"
+                               Foreground="{StaticResource TertiaryTextBrush}" HorizontalAlignment="Center" Margin="0,6,0,0"/>
+                </StackPanel>
+
+                <!-- Import guide -->
+                <StackPanel x:Name="ImportPanel" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="520" Visibility="Collapsed">
+                    <TextBlock Text="One last thing: your history" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                    <TextBlock TextWrapping="Wrap" TextAlignment="Center" Foreground="{StaticResource SecondaryTextBrush}" Margin="0,0,0,18"
+                               Text="Choose how much of your existing email to bring in."/>
+                    <Border Style="{StaticResource CardBorder}">
+                        <StackPanel>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,10" FontSize="12"
+                                       Text="📥 Import a Google Takeout .mbox archive to capture your full application history — parsing takes about a minute per gigabyte."/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,10" FontSize="12"
+                                       Text="🧠 AI classification runs at roughly 8 emails per request; a typical archive finishes in a few minutes with live progress."/>
+                            <TextBlock TextWrapping="Wrap" FontSize="12"
+                                       Text="🕒 After that, every launch only processes email that arrived since your last sync — quick and quiet."/>
+                        </StackPanel>
+                    </Border>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,16,0,0">
+                        <Button Content="Import Archive…" Style="{StaticResource PrimaryButton}" Padding="20,10" Click="ImportArchive_Click"/>
+                        <Button Content="Skip — sync from now on" Margin="12,0,0,0" Padding="20,10" Click="Finish_Click"/>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+        </ScrollViewer>
+
+        <!-- Controls -->
+        <Grid Grid.Row="1" Margin="24">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Button x:Name="BackButton" Grid.Column="0" Content="Back" HorizontalAlignment="Left" Padding="16,8" Click="Back_Click"/>
+            <StackPanel x:Name="StepDots" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center"/>
+            <Button x:Name="ContinueButton" Grid.Column="2" Style="{StaticResource PrimaryButton}"
+                    HorizontalAlignment="Right" Padding="20,8" Click="Continue_Click"/>
+        </Grid>
+    </Grid>
+</UserControl>

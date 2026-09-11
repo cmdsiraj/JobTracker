@@ -1,0 +1,38 @@
+<UserControl x:Class="JobTracker.Controls.TimelineScrubber"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d" d:DesignHeight="90" d:DesignWidth="500">
+    <Border Style="{StaticResource CardBorder}" Padding="12">
+        <StackPanel>
+            <Grid Margin="0,0,0,6">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="Timeline" FontSize="11" FontWeight="SemiBold"
+                           Foreground="{StaticResource SecondaryTextBrush}" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="2" x:Name="RangeLabel" FontSize="11" FontWeight="SemiBold"
+                           VerticalAlignment="Center" Margin="0,0,10,0"/>
+                <Button Grid.Column="3" Content="Last 5 Months" Style="{StaticResource PlainButton}"
+                        Foreground="{StaticResource AccentBrush}" FontSize="11" Click="ResetToDefault_Click"/>
+            </Grid>
+
+            <Canvas x:Name="TrackCanvas" Height="36" Background="Transparent"
+                    MouseLeftButtonDown="TrackCanvas_MouseLeftButtonDown"
+                    MouseMove="TrackCanvas_MouseMove"
+                    MouseLeftButtonUp="TrackCanvas_MouseLeftButtonUp"
+                    SizeChanged="TrackCanvas_SizeChanged"/>
+
+            <Grid Margin="0,4,0,0">
+                <TextBlock x:Name="DomainStartLabel" FontSize="10" HorizontalAlignment="Left"
+                           Foreground="{StaticResource TertiaryTextBrush}"/>
+                <TextBlock x:Name="DomainEndLabel" FontSize="10" HorizontalAlignment="Right"
+                           Foreground="{StaticResource TertiaryTextBrush}"/>
+            </Grid>
+        </StackPanel>
+    </Border>
+</UserControl>

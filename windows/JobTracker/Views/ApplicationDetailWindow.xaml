@@ -1,0 +1,97 @@
+<Window x:Class="JobTracker.Views.ApplicationDetailWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Application" Width="600" Height="640" MinWidth="560" MinHeight="480">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Grid Grid.Row="0" Margin="20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0">
+                <TextBox x:Name="CompanyBox" FontSize="20" FontWeight="Bold" BorderThickness="0" Background="Transparent" Padding="0"
+                         LostFocus="CompanyBox_LostFocus"/>
+                <TextBox x:Name="RoleBox" FontSize="14" BorderThickness="0" Background="Transparent" Padding="0" Margin="0,2,0,0"
+                         Foreground="{StaticResource SecondaryTextBrush}" LostFocus="RoleBox_LostFocus"/>
+            </StackPanel>
+            <ComboBox x:Name="StatusCombo" Grid.Column="1" Margin="8,0,0,0" VerticalAlignment="Top" SelectionChanged="StatusCombo_SelectionChanged"/>
+            <Button x:Name="MenuButton" Grid.Column="2" Content="⋯" FontSize="16" Padding="8,2" Margin="8,0,0,0" Click="MenuButton_Click"/>
+            <Button Grid.Column="3" Content="✕" Style="{StaticResource PlainButton}" Margin="8,0,0,0" Click="Close_Click"/>
+        </Grid>
+
+        <StackPanel Grid.Row="1">
+            <Border x:Name="ReviewBanner" Background="#1FF5A623" CornerRadius="10" Padding="12" Margin="20,0,20,16" Visibility="Collapsed">
+                <DockPanel>
+                    <Button Content="Mark Reviewed" DockPanel.Dock="Right" Padding="10,4" Click="MarkReviewed_Click"/>
+                    <TextBlock Text="⚠️ Some emails were matched to this application with low confidence." TextWrapping="Wrap" VerticalAlignment="Center"/>
+                </DockPanel>
+            </Border>
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="20,0,20,20">
+                <!-- Details grid -->
+                <Grid Margin="0,0,0,20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="90"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Location" Style="{StaticResource CaptionText}" VerticalAlignment="Center"/>
+                    <TextBox x:Name="LocationBox" Grid.Row="0" Grid.Column="1" Margin="0,3" LostFocus="LocationBox_LostFocus"/>
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Source" Style="{StaticResource CaptionText}" VerticalAlignment="Center"/>
+                    <TextBox x:Name="SourceBox" Grid.Row="1" Grid.Column="1" Margin="0,3" LostFocus="SourceBox_LostFocus"/>
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Cycle" Style="{StaticResource CaptionText}" VerticalAlignment="Center"/>
+                    <TextBox x:Name="CycleBox" Grid.Row="2" Grid.Column="1" Margin="0,3" LostFocus="CycleBox_LostFocus"/>
+
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Next Action" Style="{StaticResource CaptionText}" VerticalAlignment="Center"/>
+                    <TextBox x:Name="NextActionBox" Grid.Row="3" Grid.Column="1" Margin="0,3" LostFocus="NextActionBox_LostFocus"/>
+
+                    <TextBlock Grid.Row="4" Grid.Column="0" Text="Tags" Style="{StaticResource CaptionText}" VerticalAlignment="Center"/>
+                    <TextBox x:Name="TagsBox" Grid.Row="4" Grid.Column="1" Margin="0,3" LostFocus="TagsBox_LostFocus"/>
+
+                    <TextBlock Grid.Row="5" Grid.Column="0" Text="Applied" Style="{StaticResource CaptionText}" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="AppliedDateText" Grid.Row="5" Grid.Column="1" Margin="0,3" VerticalAlignment="Center"/>
+
+                    <TextBlock Grid.Row="6" Grid.Column="0" Text="Contact" Style="{StaticResource CaptionText}" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="ContactText" Grid.Row="6" Grid.Column="1" Margin="0,3" VerticalAlignment="Center"/>
+                </Grid>
+
+                <!-- Notes -->
+                <TextBlock Text="Notes" Style="{StaticResource SectionHeader}"/>
+                <TextBox x:Name="NotesBox" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="72" Margin="0,0,0,20" LostFocus="NotesBox_LostFocus"/>
+
+                <!-- Timeline -->
+                <TextBlock Text="Communication Log" Style="{StaticResource SectionHeader}"/>
+                <DockPanel Margin="0,0,0,12">
+                    <Button Content="➕ Add Note" DockPanel.Dock="Right" Padding="10,6" Margin="8,0,0,0" Click="AddNote_Click"/>
+                    <TextBox x:Name="NewNoteBox" KeyDown="NewNoteBox_KeyDown"/>
+                </DockPanel>
+
+                <StackPanel x:Name="TimelinePanel"/>
+                <TextBlock x:Name="NoActivityText" Text="No activity yet. Notes and matched emails will appear here."
+                           Foreground="{StaticResource SecondaryTextBrush}" Visibility="Collapsed"/>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>

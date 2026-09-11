@@ -29,6 +29,9 @@ public sealed partial class FilterState : ObservableObject
 
     public void NotifyChanged() => Changed?.Invoke();
 
+    partial void OnSearchTextChanged(string value) => NotifyChanged();
+    partial void OnTimelineChanged(DateRange? value) => NotifyChanged();
+
     public void Clear()
     {
         Statuses.Clear();

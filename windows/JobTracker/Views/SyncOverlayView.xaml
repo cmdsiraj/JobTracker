@@ -1,0 +1,16 @@
+<UserControl x:Class="JobTracker.Views.SyncOverlayView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Border Width="300" Background="{StaticResource CardBackgroundBrush}" CornerRadius="16"
+            BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Padding="16">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="24" ShadowDepth="6" Opacity="0.2" Color="Black"/>
+        </Border.Effect>
+        <StackPanel>
+            <StackPanel x:Name="HeaderPanel" Orientation="Horizontal" Margin="0,0,0,12"/>
+            <StackPanel x:Name="ChecklistPanel"/>
+            <TextBlock x:Name="FailureText" TextWrapping="Wrap" FontSize="11" Foreground="{StaticResource SecondaryTextBrush}" Visibility="Collapsed"/>
+            <Button x:Name="CancelButton" Content="✕ Cancel" HorizontalAlignment="Stretch" Margin="0,10,0,0" Padding="0,6" Visibility="Collapsed" Click="Cancel_Click"/>
+        </StackPanel>
+    </Border>
+</UserControl>

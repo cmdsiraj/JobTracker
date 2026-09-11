@@ -1,0 +1,29 @@
+<UserControl x:Class="JobTracker.Views.ReviewView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1" Padding="12,8">
+            <DockPanel>
+                <Button Content="🔀 Merge Duplicates" DockPanel.Dock="Right" Padding="10,6" Click="MergeDuplicates_Click"/>
+                <TextBlock x:Name="MergeResultText" VerticalAlignment="Center" FontSize="12" Foreground="{StaticResource SecondaryTextBrush}" Visibility="Collapsed"/>
+            </DockPanel>
+        </Border>
+
+        <Grid Grid.Row="1">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel x:Name="RowsPanel" Margin="16"/>
+            </ScrollViewer>
+            <StackPanel x:Name="EmptyState" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed">
+                <TextBlock Text="✅" FontSize="40" HorizontalAlignment="Center"/>
+                <TextBlock Text="All Clear" FontSize="16" FontWeight="SemiBold" Margin="0,8,0,4" HorizontalAlignment="Center"/>
+                <TextBlock Text="Nothing needs review. Low-confidence email matches will land here after a sync."
+                           Foreground="{StaticResource SecondaryTextBrush}" HorizontalAlignment="Center" MaxWidth="320" TextWrapping="Wrap" TextAlignment="Center"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>

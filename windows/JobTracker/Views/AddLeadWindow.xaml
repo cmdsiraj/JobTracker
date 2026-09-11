@@ -1,0 +1,39 @@
+<Window x:Class="JobTracker.Views.AddLeadWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="New Lead" Width="420" SizeToContent="Height" ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
+    <StackPanel Margin="24">
+        <TextBlock Text="New Lead" FontSize="18" FontWeight="Bold" Margin="0,0,0,16"/>
+
+        <UniformGrid Rows="1" Columns="2" Margin="0,0,0,12">
+            <RadioButton x:Name="JobPostingRadio" Content="🔗 Job Posting" GroupName="LeadType" IsChecked="True" Checked="TypeChanged"/>
+            <RadioButton x:Name="PersonRadio" Content="👤 Person / Contact" GroupName="LeadType" Checked="TypeChanged"/>
+        </UniformGrid>
+
+        <StackPanel x:Name="PersonNamePanel" Visibility="Collapsed" Margin="0,0,0,8">
+            <TextBlock Text="Name" Style="{StaticResource CaptionText}"/>
+            <TextBox x:Name="PersonNameBox"/>
+        </StackPanel>
+        <StackPanel Margin="0,0,0,8">
+            <TextBlock x:Name="TitleLabel" Text="Role Title" Style="{StaticResource CaptionText}"/>
+            <TextBox x:Name="TitleBox"/>
+        </StackPanel>
+        <StackPanel Margin="0,0,0,8">
+            <TextBlock Text="Company" Style="{StaticResource CaptionText}"/>
+            <TextBox x:Name="CompanyBox"/>
+        </StackPanel>
+        <StackPanel Margin="0,0,0,8">
+            <TextBlock Text="Link (posting or profile)" Style="{StaticResource CaptionText}"/>
+            <TextBox x:Name="UrlBox"/>
+        </StackPanel>
+        <StackPanel Margin="0,0,0,16">
+            <TextBlock Text="Notes" Style="{StaticResource CaptionText}"/>
+            <TextBox x:Name="NotesBox" AcceptsReturn="True" TextWrapping="Wrap" Height="60"/>
+        </StackPanel>
+
+        <Grid>
+            <Button Content="Cancel" HorizontalAlignment="Left" Padding="14,6" Click="Cancel_Click"/>
+            <Button x:Name="AddButton" Content="Add Lead" Style="{StaticResource PrimaryButton}" HorizontalAlignment="Right" Padding="18,6" Click="Add_Click"/>
+        </Grid>
+    </StackPanel>
+</Window>

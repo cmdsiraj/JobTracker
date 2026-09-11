@@ -1,0 +1,70 @@
+<Window x:Class="JobTracker.Views.NewApplicationWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Add Manually" Width="460" SizeToContent="Height" ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
+    <StackPanel Margin="24">
+        <TextBlock Text="Add Manually" FontSize="18" FontWeight="Bold" Margin="0,0,0,16"/>
+
+        <UniformGrid Rows="1" Columns="2" Margin="0,0,0,14">
+            <RadioButton x:Name="NewApplicationRadio" Content="New Application" GroupName="Mode" IsChecked="True" Checked="ModeChanged"/>
+            <RadioButton x:Name="UpdateRadio" Content="Update Existing" GroupName="Mode" Checked="ModeChanged"/>
+        </UniformGrid>
+
+        <!-- New application fields -->
+        <StackPanel x:Name="NewApplicationPanel">
+            <StackPanel Margin="0,0,0,8">
+                <TextBlock Text="Company" Style="{StaticResource CaptionText}"/>
+                <TextBox x:Name="CompanyBox"/>
+            </StackPanel>
+            <StackPanel Margin="0,0,0,8">
+                <TextBlock Text="Role" Style="{StaticResource CaptionText}"/>
+                <TextBox x:Name="RoleBox"/>
+            </StackPanel>
+            <StackPanel Margin="0,0,0,8">
+                <TextBlock Text="Status" Style="{StaticResource CaptionText}"/>
+                <ComboBox x:Name="StatusCombo"/>
+            </StackPanel>
+            <StackPanel Margin="0,0,0,8">
+                <TextBlock Text="Cycle (e.g. Summer 2026)" Style="{StaticResource CaptionText}"/>
+                <TextBox x:Name="CycleBox"/>
+            </StackPanel>
+            <StackPanel Margin="0,0,0,8">
+                <TextBlock Text="Location" Style="{StaticResource CaptionText}"/>
+                <TextBox x:Name="LocationBox"/>
+            </StackPanel>
+            <StackPanel Margin="0,0,0,8">
+                <TextBlock Text="Source (e.g. LinkedIn, referral)" Style="{StaticResource CaptionText}"/>
+                <TextBox x:Name="SourceBox"/>
+            </StackPanel>
+            <StackPanel Margin="0,0,0,8">
+                <TextBlock Text="Date" Style="{StaticResource CaptionText}"/>
+                <DatePicker x:Name="AppliedDatePicker"/>
+            </StackPanel>
+            <StackPanel Margin="0,0,0,8">
+                <TextBlock Text="Notes" Style="{StaticResource CaptionText}"/>
+                <TextBox x:Name="NotesBox" AcceptsReturn="True" TextWrapping="Wrap" Height="50"/>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- Update fields -->
+        <StackPanel x:Name="UpdatePanel" Visibility="Collapsed">
+            <StackPanel Margin="0,0,0,8">
+                <TextBlock Text="Application" Style="{StaticResource CaptionText}"/>
+                <ComboBox x:Name="TargetAppCombo"/>
+            </StackPanel>
+            <StackPanel Margin="0,0,0,8">
+                <TextBlock Text="What happened?" Style="{StaticResource CaptionText}"/>
+                <TextBox x:Name="UpdateTextBox" AcceptsReturn="True" TextWrapping="Wrap" Height="60"/>
+            </StackPanel>
+            <StackPanel Margin="0,0,0,8">
+                <TextBlock Text="Move status to" Style="{StaticResource CaptionText}"/>
+                <ComboBox x:Name="NewStatusCombo"/>
+            </StackPanel>
+        </StackPanel>
+
+        <Grid Margin="0,10,0,0">
+            <Button Content="Cancel" HorizontalAlignment="Left" Padding="14,6" Click="Cancel_Click"/>
+            <Button x:Name="SaveButton" Content="Add Application" Style="{StaticResource PrimaryButton}" HorizontalAlignment="Right" Padding="18,6" Click="Save_Click"/>
+        </Grid>
+    </StackPanel>
+</Window>
