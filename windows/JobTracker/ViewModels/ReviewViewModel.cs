@@ -31,7 +31,10 @@ public sealed partial class ReviewViewModel : DispatcherObservableObject
 
     public void Reload()
     {
-        Applications = [.. _context.Applications.Where(a => a.NeedsReview).OrderByDescending(a => a.LastUpdated)];
+        // Where() stays server-side; AsEnumerable() before OrderBy because
+        // EF Core's SQLite provider can't translate ORDER BY over a
+        // DateTimeOffset column.
+        Applications = [.. _context.Applications.Where(a => a.NeedsReview).AsEnumerable().OrderByDescending(a => a.LastUpdated)];
     }
 
     public static IEnumerable<EmailEvent> LowConfidenceEvents(JobApplication app) =>

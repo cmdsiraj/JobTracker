@@ -27,7 +27,9 @@ public sealed partial class LeadsViewModel : DispatcherObservableObject
 
     public void Reload()
     {
-        Leads = [.. _context.Leads.OrderByDescending(l => l.LastUpdated)];
+        // AsEnumerable(): EF Core's SQLite provider can't translate ORDER BY
+        // over a DateTimeOffset column, so this sorts client-side.
+        Leads = [.. _context.Leads.AsEnumerable().OrderByDescending(l => l.LastUpdated)];
         OnPropertyChanged(nameof(FilteredLeads));
     }
 

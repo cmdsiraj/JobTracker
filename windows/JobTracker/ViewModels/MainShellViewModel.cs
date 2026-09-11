@@ -66,7 +66,9 @@ public sealed partial class MainShellViewModel : DispatcherObservableObject
 
     public void Reload()
     {
-        Applications = [.. _context.Applications.OrderByDescending(a => a.LastUpdated)];
+        // AsEnumerable(): EF Core's SQLite provider can't translate ORDER BY
+        // over a DateTimeOffset column, so this sorts client-side.
+        Applications = [.. _context.Applications.AsEnumerable().OrderByDescending(a => a.LastUpdated)];
         RaiseFilteredChanged();
     }
 

@@ -25,7 +25,9 @@ public sealed partial class TrayViewModel : DispatcherObservableObject
 
     public void Reload()
     {
-        RecentApplications = [.. _context.Applications.OrderByDescending(a => a.LastUpdated).Take(6)];
+        // AsEnumerable(): EF Core's SQLite provider can't translate ORDER BY
+        // over a DateTimeOffset column, so this sorts client-side.
+        RecentApplications = [.. _context.Applications.AsEnumerable().OrderByDescending(a => a.LastUpdated).Take(6)];
     }
 
     public string StatusText

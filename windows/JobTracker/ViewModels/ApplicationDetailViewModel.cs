@@ -31,8 +31,10 @@ public sealed partial class ApplicationDetailViewModel : DispatcherObservableObj
     public IEnumerable<EmailEvent> SortedEvents => Application.SortedEvents;
 
     /// All applications in the store, for the merge-target picker.
+    /// AsEnumerable() first: EF Core's SQLite provider can't translate
+    /// ORDER BY over a DateTimeOffset column, so this sorts client-side.
     public List<JobApplication> ContextApplications() =>
-        [.. _context.Applications.OrderByDescending(a => a.LastUpdated)];
+        [.. _context.Applications.AsEnumerable().OrderByDescending(a => a.LastUpdated)];
 
     public string TagsText
     {

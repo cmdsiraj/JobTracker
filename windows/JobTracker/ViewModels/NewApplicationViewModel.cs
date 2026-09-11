@@ -41,7 +41,9 @@ public sealed partial class NewApplicationViewModel : DispatcherObservableObject
     public NewApplicationViewModel(JobTrackerDbContext context)
     {
         _context = context;
-        Applications = [.. context.Applications.OrderByDescending(a => a.LastUpdated)];
+        // AsEnumerable(): EF Core's SQLite provider can't translate ORDER BY
+        // over a DateTimeOffset column, so this sorts client-side.
+        Applications = [.. context.Applications.AsEnumerable().OrderByDescending(a => a.LastUpdated)];
     }
 
     public bool CanSave => Mode == NewApplicationMode.NewApplication
