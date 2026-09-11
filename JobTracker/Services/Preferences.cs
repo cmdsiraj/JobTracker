@@ -10,10 +10,12 @@ using System.Text.Json;
 
 namespace JobTracker.Services;
 
-/// LLM providers the classifier can talk to. All expose OpenAI-compatible
-/// chat-completions endpoints; each keeps its own API key in Secrets, so
-/// switching providers never loses a key.
-public enum LlmProvider { Nvidia, OpenAi, OpenRouter, Groq, Custom }
+/// LLM providers the classifier can talk to. Nvidia/OpenAi/OpenRouter/Groq/
+/// Custom expose OpenAI-compatible chat-completions endpoints and each keep
+/// a single API key in Secrets; Bedrock is a different shape entirely (AWS
+/// SigV4-signed Converse API, region + optional access/secret key pair) —
+/// see BedrockClient.
+public enum LlmProvider { Nvidia, OpenAi, OpenRouter, Groq, Custom, Bedrock }
 
 public static class LlmProviderExtensions
 {
@@ -24,10 +26,12 @@ public static class LlmProviderExtensions
         LlmProvider.OpenRouter => "OpenRouter",
         LlmProvider.Groq => "Groq",
         LlmProvider.Custom => "Custom (OpenAI-compatible)",
+        LlmProvider.Bedrock => "AWS Bedrock",
         _ => provider.ToString(),
     };
 
-    /// Fixed endpoint; null means the user supplies one (custom).
+    /// Fixed endpoint; null means the user supplies one (custom), or the
+    /// provider isn't a plain HTTP endpoint at all (Bedrock uses the AWS SDK).
     public static Uri? BaseUrl(this LlmProvider provider) => provider switch
     {
         LlmProvider.Nvidia => new Uri("https://integrate.api.nvidia.com/v1/chat/completions"),
@@ -35,6 +39,7 @@ public static class LlmProviderExtensions
         LlmProvider.OpenRouter => new Uri("https://openrouter.ai/api/v1/chat/completions"),
         LlmProvider.Groq => new Uri("https://api.groq.com/openai/v1/chat/completions"),
         LlmProvider.Custom => null,
+        LlmProvider.Bedrock => null,
         _ => null,
     };
 
@@ -45,9 +50,14 @@ public static class LlmProviderExtensions
         LlmProvider.OpenRouter => "meta-llama/llama-4-maverick",
         LlmProvider.Groq => "llama-4-maverick-17b",
         LlmProvider.Custom => "",
+        LlmProvider.Bedrock => "",
         _ => "",
     };
 
+    /// The "primary" secret used for generic HasApiKey-style checks. Bedrock
+    /// isn't well-represented by a single key (it may use a local AWS
+    /// profile instead) — Settings/BedrockClient handle that case directly
+    /// rather than relying on this.
     public static SecretKey SecretKey(this LlmProvider provider) => provider switch
     {
         LlmProvider.Nvidia => Services.SecretKey.NvidiaApiKey,
@@ -55,6 +65,7 @@ public static class LlmProviderExtensions
         LlmProvider.OpenRouter => Services.SecretKey.OpenRouterKey,
         LlmProvider.Groq => Services.SecretKey.GroqKey,
         LlmProvider.Custom => Services.SecretKey.CustomLlmKey,
+        LlmProvider.Bedrock => Services.SecretKey.AwsSecretAccessKey,
         _ => Services.SecretKey.CustomLlmKey,
     };
 
@@ -65,6 +76,7 @@ public static class LlmProviderExtensions
         LlmProvider.OpenRouter => "sk-or-…",
         LlmProvider.Groq => "gsk_…",
         LlmProvider.Custom => "API key",
+        LlmProvider.Bedrock => "AWS Secret Access Key",
         _ => "API key",
     };
 }
@@ -76,6 +88,7 @@ internal sealed class PreferencesData
     public string Model { get; set; } = AppConfig.DefaultModel;
     public LlmProvider Provider { get; set; } = LlmProvider.Nvidia;
     public string CustomBaseUrl { get; set; } = "";
+    public string BedrockRegion { get; set; } = "us-east-1";
     public bool TrayWatcherEnabled { get; set; }
     public double PollIntervalSeconds { get; set; } = AppConfig.DefaultPollInterval.TotalSeconds;
     public bool OnboardingDone { get; set; }
@@ -121,6 +134,12 @@ public sealed class Preferences
         set { _data.CustomBaseUrl = value; Save(); }
     }
 
+    public string BedrockRegion
+    {
+        get => _data.BedrockRegion;
+        set { _data.BedrockRegion = value; Save(); }
+    }
+
     /// Effective chat-completions endpoint for the active provider.
     public Uri? EffectiveBaseUrl =>
         Provider.BaseUrl() ?? (Uri.TryCreate(CustomBaseUrl, UriKind.Absolute, out var uri) ? uri : null);
@@ -162,6 +181,7 @@ public sealed class Preferences
         _data.Model = AppConfig.DefaultModel;
         _data.Provider = LlmProvider.Nvidia;
         _data.CustomBaseUrl = "";
+        _data.BedrockRegion = "us-east-1";
         _data.TrayWatcherEnabled = false;
         _data.PollIntervalSeconds = AppConfig.DefaultPollInterval.TotalSeconds;
         _data.OnboardingDone = false;

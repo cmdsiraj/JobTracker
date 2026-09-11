@@ -52,26 +52,30 @@
                         </Border>
                     </StackPanel>
 
-                    <StackPanel x:Name="GmailDisconnectedPanel">
-                        <Border Style="{StaticResource CardBorder}" MaxWidth="460">
-                            <StackPanel>
-                                <TextBlock Text="🔑 Your Google OAuth Client ID" FontWeight="SemiBold" Margin="0,0,0,8"/>
-                                <TextBlock TextWrapping="Wrap" FontSize="11" Foreground="{StaticResource SecondaryTextBrush}" Margin="0,0,0,8">
-                                    JobTracker uses your own (free) Google API access — nothing is shared:
-                                    1. Go to console.cloud.google.com and create a project
-                                    2. Enable the Gmail API
-                                    3. OAuth consent screen → External → add your email as a Test user
-                                    4. Credentials → Create OAuth client ID → type "Desktop app"
-                                    5. Paste the Client ID below
-                                </TextBlock>
-                                <TextBox x:Name="ClientIdBox" FontFamily="Consolas"
-                                         TextChanged="ClientIdBox_TextChanged"/>
-                                <TextBlock x:Name="ClientIdWarning" FontSize="11" Foreground="{StaticResource WarningBrush}" Margin="0,4,0,0"
-                                           Text="A client ID ends in .apps.googleusercontent.com" Visibility="Collapsed"/>
-                            </StackPanel>
+                    <StackPanel x:Name="GmailDisconnectedPanel" HorizontalAlignment="Center">
+                        <TextBox x:Name="ClientIdBox" Width="360" FontFamily="Consolas" FontSize="11"
+                                 TextChanged="ClientIdBox_TextChanged"/>
+                        <TextBlock x:Name="ClientIdWarning" FontSize="11" Foreground="{StaticResource WarningBrush}"
+                                   HorizontalAlignment="Center" Margin="0,4,0,0" Visibility="Collapsed"
+                                   Text="A client ID ends in .apps.googleusercontent.com"/>
+                        <Button x:Name="ToggleInstructionsButton" Content="How do I get a Client ID? ▾" Style="{StaticResource PlainButton}"
+                                Foreground="{StaticResource AccentBrush}" FontSize="11" HorizontalAlignment="Center"
+                                Margin="0,8,0,0" Click="ToggleInstructions_Click"/>
+                        <Border x:Name="InstructionsPanel" Style="{StaticResource CardBorder}" MaxWidth="460" Margin="0,10,0,0" Visibility="Collapsed">
+                            <TextBlock TextWrapping="Wrap" FontSize="11" Foreground="{StaticResource SecondaryTextBrush}">
+                                JobTracker uses your own (free) Google API access — nothing is shared:
+                                1. Go to console.cloud.google.com and create a project
+                                2. Enable the Gmail API
+                                3. OAuth consent screen → External → add your email as a Test user
+                                4. Credentials → Create OAuth client ID → type "Desktop app"
+                                5. Paste the Client ID above
+                            </TextBlock>
                         </Border>
+
                         <Button x:Name="ConnectGmailButton" Content="Connect Gmail" Style="{StaticResource PrimaryButton}"
                                 HorizontalAlignment="Center" Margin="0,16,0,0" Padding="24,10" Click="ConnectGmail_Click"/>
+                        <TextBlock Text="You can skip this and connect later from Settings → Account." FontSize="11"
+                                   Foreground="{StaticResource TertiaryTextBrush}" HorizontalAlignment="Center" Margin="0,10,0,0"/>
                     </StackPanel>
 
                     <TextBlock x:Name="SignInErrorText" Foreground="{StaticResource WarningBrush}" TextWrapping="Wrap"

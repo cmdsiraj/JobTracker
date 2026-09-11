@@ -38,7 +38,7 @@ equivalent, so storage is always the local SQLite file under
 | Windows 10 or 11 | |
 | .NET 10 SDK | to build from source — `dotnet --version` |
 | Google Cloud OAuth client (**Desktop app** type) | free — enables Gmail sign-in; different client *type* than macOS's "iOS" client, since this uses a loopback redirect instead of a custom URL scheme |
-| LLM API key | e.g. NVIDIA NIM (free tier at build.nvidia.com), OpenAI, OpenRouter, Groq, or any OpenAI-compatible endpoint |
+| LLM API key or AWS credentials | e.g. NVIDIA NIM (free tier at build.nvidia.com), OpenAI, OpenRouter, Groq, any OpenAI-compatible endpoint, or AWS Bedrock |
 
 ## Getting started
 
@@ -63,6 +63,55 @@ On first launch, onboarding walks you through: Gmail connect → LLM API key
 4. Credentials → Create OAuth client ID → type **Desktop app**
 5. Paste the Client ID into onboarding (or Settings → Account)
 
+### Using AWS Bedrock instead of a hosted LLM API
+
+Pick **AWS Bedrock** as the provider in Settings → Account, set the Region
+and a Bedrock model ID (e.g. `anthropic.claude-3-5-sonnet-20241022-v2:0`).
+Credentials come from either source, checked in this order:
+
+1. **An Access Key ID + Secret Access Key** pasted into Settings — stored
+   DPAPI-encrypted like the other providers' keys.
+2. **A local AWS profile** — if both fields above are left blank, JobTracker
+   falls back to whatever `AWS_ACCESS_KEY_ID`/`AWS_SECRET_ACCESS_KEY`
+   environment variables or `%USERPROFILE%\.aws\credentials`/`\config`
+   (AWS CLI or SSO login) already provide on this machine.
+
+Your IAM principal needs `bedrock:InvokeModel` (the Converse API) on the
+model you pick, and the model needs to be enabled for your account in that
+region (Bedrock console → Model access).
+
+### Running as a standalone app
+
+`dotnet run` needs the .NET SDK. To get a normal double-clickable `.exe`
+that doesn't:
+
+```powershell
+.\publish.ps1          # builds publish\JobTracker.exe (self-contained, ~85 MB)
+.\make-shortcut.ps1     # adds a JobTracker shortcut to your Desktop
+```
+
+The published exe carries its own .NET runtime, so it runs on a PC without
+the SDK (or any .NET runtime) installed. Config/data still live in
+`%LOCALAPPDATA%\JobTracker\`, so a rebuild or republish never asks you to
+re-enter your Gmail/LLM setup — see "Config persistence" below.
+
+### Config persistence
+
+Everything you enter in onboarding or Settings — the Google OAuth Client
+ID, LLM/AWS keys, Gmail tokens, and all tracked applications — is stored
+outside the build output, in `%LOCALAPPDATA%\JobTracker\`:
+
+| File | Contents |
+|---|---|
+| `secrets.v2` | DPAPI-encrypted: API keys, AWS keys, Gmail tokens |
+| `preferences.json` | Provider/model/region choice, onboarding state |
+| `JobTrackerV2.db` | SQLite: applications, events, leads |
+
+`dotnet build`, `dotnet run`, and re-publishing never touch this folder, so
+rebuilding is always safe — you're never asked to reconnect Gmail or
+re-enter a key. Only Settings → **Erase All Data** (or manually deleting
+that folder) resets it.
+
 ### Running tests
 
 ```bash
@@ -83,7 +132,8 @@ ViewModels                 One per screen (CommunityToolkit.Mvvm)
 Domain services            SyncPipeline (staged, cancellable) · EmailClassifier (batched)
                            ApplicationMatcher (multi-signal) · DuplicateMerger · CycleDetector
 Infrastructure              GmailAuthService (OAuth PKCE, loopback) · NimClient (+ RequestThrottle)
-                           MboxParser (streaming MIME) · Secrets (DPAPI) · StoreManager (EF Core/SQLite)
+                           BedrockClient (AWS SigV4/Converse) · MboxParser (streaming MIME)
+                           Secrets (DPAPI) · StoreManager (EF Core/SQLite)
 ```
 
 - **Sync** is launch-triggered with a timestamp watermark — no background

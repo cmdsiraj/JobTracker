@@ -33,17 +33,38 @@
 
                     <TextBlock Text="AI Provider" Style="{StaticResource SectionHeader}"/>
                     <ComboBox x:Name="ProviderCombo" Margin="0,0,0,8" SelectionChanged="ProviderCombo_SelectionChanged"/>
-                    <TextBlock Text="Model" Style="{StaticResource CaptionText}"/>
-                    <TextBox x:Name="ModelBox" Margin="0,0,0,8" LostFocus="ModelBox_LostFocus"/>
+                    <TextBlock x:Name="ModelLabel" Text="Model" Style="{StaticResource CaptionText}"/>
+                    <TextBox x:Name="ModelBox" Margin="0,0,0,2" LostFocus="ModelBox_LostFocus"/>
+                    <TextBlock x:Name="ModelHintText" Style="{StaticResource CaptionText}" Margin="0,0,0,8" Visibility="Collapsed"/>
                     <StackPanel x:Name="CustomEndpointPanel" Visibility="Collapsed" Margin="0,0,0,8">
                         <TextBlock Text="Endpoint URL (…/v1/chat/completions)" Style="{StaticResource CaptionText}"/>
                         <TextBox x:Name="EndpointBox" LostFocus="EndpointBox_LostFocus"/>
                     </StackPanel>
-                    <TextBlock x:Name="ApiKeyStatusText" Margin="0,0,0,4"/>
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
-                        <PasswordBox x:Name="ApiKeyBox" Width="220" PasswordChanged="ApiKeyBox_PasswordChanged"/>
-                        <Button x:Name="ValidateKeyButton" Content="Validate &amp; Save" Padding="10,5" Margin="8,0,0,0" Click="ValidateKey_Click"/>
+                    <!-- Generic single-key providers -->
+                    <StackPanel x:Name="GenericKeyPanel">
+                        <TextBlock x:Name="ApiKeyStatusText" Margin="0,0,0,4"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                            <PasswordBox x:Name="ApiKeyBox" Width="220" PasswordChanged="ApiKeyBox_PasswordChanged"/>
+                            <Button x:Name="ValidateKeyButton" Content="Validate &amp; Save" Padding="10,5" Margin="8,0,0,0" Click="ValidateKey_Click"/>
+                        </StackPanel>
                     </StackPanel>
+
+                    <!-- AWS Bedrock: region + credential pair, with a local-profile fallback -->
+                    <StackPanel x:Name="BedrockPanel" Visibility="Collapsed">
+                        <TextBlock Text="Region" Style="{StaticResource CaptionText}"/>
+                        <TextBox x:Name="BedrockRegionBox" Margin="0,0,0,8" LostFocus="BedrockRegionBox_LostFocus"/>
+                        <TextBlock x:Name="BedrockStatusText" Margin="0,0,0,4"/>
+                        <TextBlock TextWrapping="Wrap" Style="{StaticResource CaptionText}" Margin="0,0,0,6"
+                                   Text="Leave both blank to use a local AWS CLI/SSO profile or AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY environment variables instead, if configured on this PC."/>
+                        <TextBlock Text="Access Key ID" Style="{StaticResource CaptionText}"/>
+                        <TextBox x:Name="AwsAccessKeyBox" Margin="0,0,0,6" TextChanged="AwsAccessKeyBox_TextChanged"/>
+                        <TextBlock Text="Secret Access Key" Style="{StaticResource CaptionText}"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                            <PasswordBox x:Name="AwsSecretKeyBox" Width="220" PasswordChanged="AwsSecretKeyBox_PasswordChanged"/>
+                            <Button x:Name="ValidateBedrockButton" Content="Validate &amp; Save" Padding="10,5" Margin="8,0,0,0" Click="ValidateBedrock_Click"/>
+                        </StackPanel>
+                    </StackPanel>
+
                     <TextBlock x:Name="KeyValidationText" Style="{StaticResource CaptionText}" TextWrapping="Wrap" Margin="0,2,0,0"/>
                 </StackPanel>
             </ScrollViewer>

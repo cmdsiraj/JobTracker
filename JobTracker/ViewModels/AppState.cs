@@ -25,7 +25,7 @@ public sealed partial class AppState : DispatcherObservableObject
         Auth = new GmailAuthService();
         Prefs = Preferences.Shared;
         Pipeline = new SyncPipeline(context, Auth, Prefs);
-        HasApiKey = Secrets.Shared.Get(Prefs.Provider.SecretKey()) is { Length: > 0 };
+        RefreshKeyState();
 
         Pipeline.SetTrayWatcher(Prefs.TrayWatcherEnabled);
     }
@@ -36,17 +36,29 @@ public sealed partial class AppState : DispatcherObservableObject
     public bool NeedsOnboarding => !Prefs.OnboardingDone;
 
     /// Saves the key for the ACTIVE provider (Settings → Account picks it).
+    /// Not used for Bedrock, which needs an access/secret key pair — see
+    /// SaveBedrockCredentials.
     public void SaveApiKey(string key)
     {
-        var trimmed = key.Trim();
-        Secrets.Shared.Set(trimmed, Prefs.Provider.SecretKey());
-        HasApiKey = trimmed.Length > 0;
+        Secrets.Shared.Set(key.Trim(), Prefs.Provider.SecretKey());
+        RefreshKeyState();
     }
 
-    /// Re-reads key presence after the provider changed.
+    public void SaveBedrockCredentials(string accessKeyId, string secretAccessKey)
+    {
+        Secrets.Shared.Set(accessKeyId.Trim(), SecretKey.AwsAccessKeyId);
+        Secrets.Shared.Set(secretAccessKey.Trim(), SecretKey.AwsSecretAccessKey);
+        RefreshKeyState();
+    }
+
+    /// Re-reads credential presence after the provider changed (or a key
+    /// was saved). Bedrock counts as configured if either an explicit key
+    /// pair or a local AWS profile/env var is available.
     public void RefreshKeyState()
     {
-        HasApiKey = Secrets.Shared.Get(Prefs.Provider.SecretKey()) is { Length: > 0 };
+        HasApiKey = Prefs.Provider == LlmProvider.Bedrock
+            ? BedrockClient.HasAnyCredentials()
+            : Secrets.Shared.Get(Prefs.Provider.SecretKey()) is { Length: > 0 };
     }
 
     /// Sends a minimal completion request through the active provider to

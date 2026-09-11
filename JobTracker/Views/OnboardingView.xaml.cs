@@ -72,6 +72,13 @@ public partial class OnboardingView : UserControl
         ConnectGmailButton.IsEnabled = configured && !_vm.SigningIn;
     }
 
+    private void ToggleInstructions_Click(object sender, RoutedEventArgs e)
+    {
+        var showing = InstructionsPanel.Visibility == Visibility.Visible;
+        InstructionsPanel.Visibility = showing ? Visibility.Collapsed : Visibility.Visible;
+        ToggleInstructionsButton.Content = showing ? "How do I get a Client ID? ▾" : "How do I get a Client ID? ▴";
+    }
+
     private async void ConnectGmail_Click(object sender, RoutedEventArgs e) => await _vm.ConnectGmailCommand.ExecuteAsync(null);
 
     private void UpdateGmailPanel()

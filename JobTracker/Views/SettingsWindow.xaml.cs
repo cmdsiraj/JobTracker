@@ -67,10 +67,35 @@ public partial class SettingsWindow : Window
 
         ProviderCombo.SelectedIndex = (int)_vm.AppState.Prefs.Provider;
         ModelBox.Text = _vm.AppState.Prefs.Model;
-        CustomEndpointPanel.Visibility = _vm.AppState.Prefs.Provider == LlmProvider.Custom ? Visibility.Visible : Visibility.Collapsed;
         EndpointBox.Text = _vm.AppState.Prefs.CustomBaseUrl;
-        ApiKeyStatusText.Text = $"API Key: {(_vm.AppState.HasApiKey ? "Set" : "Missing")}";
+        BedrockRegionBox.Text = _vm.AppState.Prefs.BedrockRegion;
+        UpdateProviderPanels();
         UpdateKeyValidationText();
+    }
+
+    /// Shows the right credential UI for the active provider (generic
+    /// single-key box, or Bedrock's region + access/secret key pair), and
+    /// updates the shared status/hint text.
+    private void UpdateProviderPanels()
+    {
+        var provider = _vm.AppState.Prefs.Provider;
+        var isBedrock = provider == LlmProvider.Bedrock;
+
+        CustomEndpointPanel.Visibility = provider == LlmProvider.Custom ? Visibility.Visible : Visibility.Collapsed;
+        GenericKeyPanel.Visibility = isBedrock ? Visibility.Collapsed : Visibility.Visible;
+        BedrockPanel.Visibility = isBedrock ? Visibility.Visible : Visibility.Collapsed;
+
+        ModelHintText.Visibility = isBedrock ? Visibility.Visible : Visibility.Collapsed;
+        ModelHintText.Text = "Bedrock model ID, e.g. anthropic.claude-3-5-sonnet-20241022-v2:0";
+
+        if (isBedrock)
+        {
+            BedrockStatusText.Text = $"Credentials: {(_vm.AppState.HasApiKey ? (BedrockClient.HasExplicitCredentials ? "Set (explicit keys)" : "Set (local AWS profile)") : "Missing")}";
+        }
+        else
+        {
+            ApiKeyStatusText.Text = $"API Key: {(_vm.AppState.HasApiKey ? "Set" : "Missing")}";
+        }
     }
 
     private void ClientIdBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -98,9 +123,10 @@ public partial class SettingsWindow : Window
         if (_loading) return;
         _vm.ProviderChanged((LlmProvider)ProviderCombo.SelectedIndex);
         ModelBox.Text = _vm.AppState.Prefs.Model;
-        CustomEndpointPanel.Visibility = _vm.AppState.Prefs.Provider == LlmProvider.Custom ? Visibility.Visible : Visibility.Collapsed;
-        ApiKeyStatusText.Text = $"API Key: {(_vm.AppState.HasApiKey ? "Set" : "Missing")}";
         ApiKeyBox.Password = "";
+        AwsAccessKeyBox.Text = "";
+        AwsSecretKeyBox.Password = "";
+        UpdateProviderPanels();
         UpdateKeyValidationText();
     }
 
@@ -121,7 +147,7 @@ public partial class SettingsWindow : Window
     private async void ValidateKey_Click(object sender, RoutedEventArgs e)
     {
         await _vm.ValidateAndSaveAsync();
-        ApiKeyStatusText.Text = $"API Key: {(_vm.AppState.HasApiKey ? "Set" : "Missing")}";
+        UpdateProviderPanels();
         if (_vm.KeyState == KeyValidationState.Valid) ApiKeyBox.Password = "";
         UpdateKeyValidationText();
     }
@@ -134,6 +160,31 @@ public partial class SettingsWindow : Window
             KeyValidationState.Invalid => ("Key saved, but validation failed. Check the key, model id, or endpoint.", (Brush)FindResource("WarningBrush")),
             _ => ("Each provider keeps its own key in the local encrypted store — switching back restores it.", (Brush)FindResource("SecondaryTextBrush")),
         };
+    }
+
+    // MARK: - Bedrock
+
+    private void BedrockRegionBox_LostFocus(object sender, RoutedEventArgs e)
+    {
+        if (_loading) return;
+        var region = BedrockRegionBox.Text.Trim();
+        _vm.AppState.Prefs.BedrockRegion = region.Length > 0 ? region : "us-east-1";
+        BedrockRegionBox.Text = _vm.AppState.Prefs.BedrockRegion;
+    }
+
+    private void AwsAccessKeyBox_TextChanged(object sender, TextChangedEventArgs e) => _vm.AwsAccessKeyInput = AwsAccessKeyBox.Text;
+    private void AwsSecretKeyBox_PasswordChanged(object sender, RoutedEventArgs e) => _vm.AwsSecretKeyInput = AwsSecretKeyBox.Password;
+
+    private async void ValidateBedrock_Click(object sender, RoutedEventArgs e)
+    {
+        await _vm.ValidateAndSaveBedrockAsync();
+        UpdateProviderPanels();
+        if (_vm.KeyState == KeyValidationState.Valid)
+        {
+            AwsAccessKeyBox.Text = "";
+            AwsSecretKeyBox.Password = "";
+        }
+        UpdateKeyValidationText();
     }
 
     // MARK: - Data

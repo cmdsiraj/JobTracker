@@ -16,6 +16,12 @@ public sealed partial class SettingsViewModel : DispatcherObservableObject
     private string _apiKeyInput = "";
 
     [ObservableProperty]
+    private string _awsAccessKeyInput = "";
+
+    [ObservableProperty]
+    private string _awsSecretKeyInput = "";
+
+    [ObservableProperty]
     private KeyValidationState _keyState = KeyValidationState.Idle;
 
     [ObservableProperty]
@@ -41,6 +47,8 @@ public sealed partial class SettingsViewModel : DispatcherObservableObject
         if (provider.SuggestedModel().Length > 0) AppState.Prefs.Model = provider.SuggestedModel();
         KeyState = KeyValidationState.Idle;
         ApiKeyInput = "";
+        AwsAccessKeyInput = "";
+        AwsSecretKeyInput = "";
         AppState.RefreshKeyState();
     }
 
@@ -51,6 +59,22 @@ public sealed partial class SettingsViewModel : DispatcherObservableObject
         var ok = await AppState.ValidateApiKeyAsync();
         KeyState = ok ? KeyValidationState.Valid : KeyValidationState.Invalid;
         if (ok) ApiKeyInput = "";
+    }
+
+    /// Bedrock's credential pair, saved together (an access key alone or a
+    /// secret alone is useless). Leaving both blank clears any explicit
+    /// keys and falls back to the local AWS profile/env-var chain.
+    public async Task ValidateAndSaveBedrockAsync()
+    {
+        KeyState = KeyValidationState.Validating;
+        AppState.SaveBedrockCredentials(AwsAccessKeyInput, AwsSecretKeyInput);
+        var ok = await AppState.ValidateApiKeyAsync();
+        KeyState = ok ? KeyValidationState.Valid : KeyValidationState.Invalid;
+        if (ok)
+        {
+            AwsAccessKeyInput = "";
+            AwsSecretKeyInput = "";
+        }
     }
 
     public async Task ReconnectAsync() => await AppState.Auth.SignInAsync();

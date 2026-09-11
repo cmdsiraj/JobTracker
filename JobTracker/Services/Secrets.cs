@@ -23,6 +23,8 @@ public enum SecretKey
     GmailAccessToken,
     GmailRefreshToken,
     GmailAccessTokenExpiry,
+    AwsAccessKeyId,
+    AwsSecretAccessKey,
 }
 
 public sealed class Secrets

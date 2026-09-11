@@ -65,6 +65,14 @@ public sealed class NimClient(string model)
     public async Task<string> CompleteAsync(List<Message> messages, int maxTokens = 800, double temperature = 0.1)
     {
         var provider = Preferences.Shared.Provider;
+
+        // Bedrock isn't an OpenAI-compatible HTTP endpoint (AWS SigV4 auth,
+        // Converse API request/response shape) — hand off entirely.
+        if (provider == LlmProvider.Bedrock)
+        {
+            return await BedrockClient.CompleteAsync(model, messages, maxTokens, temperature);
+        }
+
         var apiKey = Secrets.Shared.Get(provider.SecretKey());
         if (string.IsNullOrEmpty(apiKey)) throw new NimException(NimErrorKind.MissingApiKey);
         var endpoint = Preferences.Shared.EffectiveBaseUrl

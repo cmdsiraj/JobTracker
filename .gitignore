@@ -8,3 +8,4 @@ Takeout/
 **/obj/
 *.user
 .vs/
+publish/
